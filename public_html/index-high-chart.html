@@ -1,0 +1,82 @@
+<html>
+  <head>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="../node_modules/FileSaver/FileSaver.js"></script>
+    <style>
+    svg { border:1px solid black; }
+	#container {
+		height: 400px; 
+		min-width: 310px; 
+		max-width: 800px;
+		margin: 0 auto;
+	}
+	body { background: transparent;}
+    </style>
+
+  </head>
+  <body>
+    <div class="svg-holder" id="container">
+     <svg id="svg" width="480" height="240" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <circle cx="100" cy="50" r="40" stroke="black"
+      stroke-width="2" fill="red" />
+      </svg>
+	</div> 
+	<br/>
+    <button id="b1" type="button">Animate</button>
+    </body>
+    <script type="text/javascript">
+      var totalDuration = 2000; // total duration of all animations
+      var frameRate = 40; // milliseconds per frame, 40 milliseconds is 1/25th of a second ie 1 frame @25fps
+      var totalFrames = totalDuration / frameRate;
+      var n = 0;
+      var id = 0;
+      function downloadSVGs() {
+        try {
+            var isFileSaverSupported = !!new Blob();
+        } catch (e) {
+            alert("blob not supported");
+        }
+
+        var html = document.querySelector('.svg-holder').innerHTML
+        var blob = new Blob([html], {type: "image/svg+xml"});
+        function saveas () {
+          saveAs(blob, id + "_myProfile.svg");
+          id++
+        }
+        setTimeout(saveas, totalDuration); // set dealy on saving as it interrupts the transition
+        if(n++ >= totalFrames)
+          return;
+        setTimeout(downloadSVGs, frameRate); 
+      }
+
+
+	$(function () {
+		$('#container').highcharts({
+			chart: {
+				type: 'column',
+				margin: 75,
+				options3d: {
+					enabled: true,
+					alpha: 15,
+					beta: 15,
+					depth: 50
+				},
+				backgroundColor: "transparent"
+			},
+			plotOptions: {
+				column: {
+					depth: 45
+				}
+			},
+			series: [{
+				data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+			}]
+		});
+	});
+	
+	downloadSVGs();
+
+</script>
+</html>
